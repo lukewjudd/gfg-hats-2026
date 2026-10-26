@@ -71,24 +71,48 @@ h1 { font: 600 1.35rem/1.15 var(--display); margin: 0; text-wrap: balance; }
 .pop-link { color: var(--fg); font-size: 0.85rem; }
 .leaflet-container a.leaflet-popup-close-button { color: var(--muted); }
 
-@media (max-width: 520px) {
-  .panel { padding: 10px 12px; gap: 8px; }
-  h1 { font-size: 1.1rem; }
-  .chip { padding: 5px 8px; }
+.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.panel-body { display: flex; flex-direction: column; gap: 10px; }
+.collapse {
+  display: none; align-items: center; gap: 6px; flex: none;
+  padding: 6px 10px; border: 1px solid var(--line); border-radius: 7px;
+  background: transparent; color: var(--fg); font: 600 0.85rem var(--body); cursor: pointer;
 }
+.collapse:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.mini { display: inline-flex; gap: 3px; }
+.mini i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.chev { transition: transform 0.15s; }
+.collapse[aria-expanded="false"] .chev { transform: rotate(-90deg); }
+
+/* phones: panel spans the top edge and collapses to a single title row */
+@media (max-width: 520px) {
+  .panel { padding: 10px 12px; gap: 8px; width: auto; right: max(12px, env(safe-area-inset-right, 0px)); }
+  h1 { font-size: 1.05rem; }
+  .chip { padding: 5px 8px; }
+  .collapse { display: inline-flex; }
+  .panel.collapsed .panel-body, .panel.collapsed .sub { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
 </style>
 </head>
 <body>
 <div id="map" role="application" aria-label="Map of hatted restaurants"></div>
 
-<div class="panel">
-  <div>
-    <h1>Good Food Guide Hats 2026</h1>
-    <p class="sub">Sydney, regional NSW &amp; ACT · <span id="total"></span> restaurants</p>
+<div class="panel" id="panel">
+  <div class="head">
+    <div>
+      <h1>Good Food Guide Hats 2026</h1>
+      <p class="sub">Sydney, regional NSW &amp; ACT · <span id="total"></span> restaurants</p>
+    </div>
+    <button class="collapse" id="collapse" aria-expanded="true" aria-controls="panel-body">
+      <span class="mini" id="mini"></span><span>Filters</span><span class="chev" aria-hidden="true">▾</span>
+    </button>
   </div>
-  <div class="filters" id="filters"></div>
-  <label class="toggle"><input type="checkbox" id="onlyNew"> Only show new entries</label>
-  <p class="foot">Hats from the <a href="https://www.goodfood.com.au/" target="_blank" rel="noopener">Good Food Guide</a>. Map © Stadia Maps, OpenMapTiles, OpenStreetMap.</p>
+  <div class="panel-body" id="panel-body">
+    <div class="filters" id="filters"></div>
+    <label class="toggle"><input type="checkbox" id="onlyNew"> Only show new entries</label>
+    <p class="foot">Hats from the <a href="https://www.goodfood.com.au/" target="_blank" rel="noopener">Good Food Guide</a>. Map © Stadia Maps, OpenMapTiles, OpenStreetMap.</p>
+  </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -153,7 +177,26 @@ const filters = document.getElementById("filters");
   });
   filters.appendChild(b);
 });
-onlyNew.addEventListener("change", refresh);
+onlyNew.addEventListener("change", () => { refresh(); renderMini(); });
+
+// collapsed summary: one dot per hat level currently shown
+const mini = document.getElementById("mini");
+function renderMini() {
+  mini.innerHTML = [3, 2, 1].filter(h => active.has(h)).map(h => `<i style="--c:${COLOURS[h]}"></i>`).join("");
+}
+renderMini();
+filters.addEventListener("click", renderMini);
+
+const panel = document.getElementById("panel");
+const collapseBtn = document.getElementById("collapse");
+function setCollapsed(c) {
+  panel.classList.toggle("collapsed", c);
+  collapseBtn.setAttribute("aria-expanded", String(!c));
+}
+collapseBtn.addEventListener("click", () => setCollapsed(!panel.classList.contains("collapsed")));
+const phone = matchMedia("(max-width: 520px)");
+setCollapsed(phone.matches);
+phone.addEventListener("change", e => setCollapsed(e.matches));
 document.getElementById("total").textContent = DATA.length;
 
 // start on Sydney but make sure regional entries are reachable
