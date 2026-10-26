@@ -30,8 +30,6 @@
 html, body { height: 100%; margin: 0; }
 body { background: var(--bg); color: var(--fg); font: 14px/1.4 var(--body); }
 #map { position: absolute; inset: 0; background: var(--bg); }
-.basemap { filter: saturate(0.35) brightness(1.03); }
-@media (prefers-color-scheme: dark) { .basemap { filter: invert(1) hue-rotate(180deg) saturate(0.3) brightness(0.85); } }
 
 .panel {
   position: absolute; z-index: 1000;
@@ -90,7 +88,7 @@ h1 { font: 600 1.35rem/1.15 var(--display); margin: 0; text-wrap: balance; }
   </div>
   <div class="filters" id="filters"></div>
   <label class="toggle"><input type="checkbox" id="onlyNew"> Only show new entries</label>
-  <p class="foot">Hats from the <a href="https://www.goodfood.com.au/" target="_blank" rel="noopener">Good Food Guide</a>. Map © OpenStreetMap contributors.</p>
+  <p class="foot">Hats from the <a href="https://www.goodfood.com.au/" target="_blank" rel="noopener">Good Food Guide</a>. Map © Stadia Maps, OpenMapTiles, OpenStreetMap.</p>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -104,9 +102,10 @@ const dark = matchMedia("(prefers-color-scheme: dark)").matches;
 
 const map = L.map("map", { zoomControl: false }).setView([-33.87, 151.2], 12);
 L.control.zoom({ position: "bottomright" }).addTo(map);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  maxZoom: 19, className: "basemap",
+// Stadia allows lukewjudd.github.io by domain (no key in the page); localhost works without setup
+L.tileLayer(`https://tiles.stadiamaps.com/tiles/${dark ? "alidade_smooth_dark" : "alidade_smooth"}/{z}/{x}/{y}{r}.png`, {
+  attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 20,
 }).addTo(map);
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
