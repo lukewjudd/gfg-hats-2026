@@ -1,0 +1,7 @@
+.env
+cache.json
+places_cache.json
+__pycache__/
+.DS_Store
+.claude/
+*.log

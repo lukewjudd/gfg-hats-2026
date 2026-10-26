@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Good Food Guide Hats 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Work+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+/* Full-bleed map; floating panel top-left holds title + hat filters */
+:root {
+  --bg: #f6f4f1;
+  --panel: rgba(255, 255, 255, 0.94);
+  --fg: #22201d;
+  --muted: #6d675f;
+  --line: #e2ddd6;
+  --hat1: #2f7d6d;
+  --hat2: #d08a1e;
+  --hat3: #b0263a;
+  --new: #22201d;
+  --display: "Fraunces", Georgia, serif;
+  --body: "Work Sans", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1b1a18; --panel: rgba(32, 30, 28, 0.94); --fg: #f1ede7; --muted: #a59e94; --line: #3a3733;
+          --hat1: #4fb39f; --hat2: #f0a83a; --hat3: #e5536a; --new: #f1ede7; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.4 var(--body); }
+#map { position: absolute; inset: 0; background: var(--bg); }
+.basemap { filter: saturate(0.35) brightness(1.03); }
+@media (prefers-color-scheme: dark) { .basemap { filter: invert(1) hue-rotate(180deg) saturate(0.3) brightness(0.85); } }
+
+.panel {
+  position: absolute; z-index: 1000;
+  top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px));
+  width: min(300px, calc(100vw - 24px));
+  background: var(--panel); backdrop-filter: blur(6px);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  display: flex; flex-direction: column; gap: 10px;
+}
+h1 { font: 600 1.35rem/1.15 var(--display); margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 0.82rem; margin: 0; }
+.filters { display: flex; flex-direction: column; gap: 6px; }
+.chip {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px;
+  background: transparent; color: var(--fg); font: 500 0.9rem var(--body);
+  cursor: pointer; text-align: left;
+}
+.chip:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.chip .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); flex: none; border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--c); }
+.chip .hats { letter-spacing: 0.02em; }
+.chip .count { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="false"] { opacity: 0.45; }
+.chip[aria-pressed="false"] .dot { background: transparent; }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.toggle input { accent-color: var(--fg); margin: 0; }
+.panel summary { cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+.foot { font-size: 0.75rem; color: var(--muted); margin: 0; }
+.foot a { color: inherit; }
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--panel); color: var(--fg); }
+.leaflet-popup-content { margin: 12px 14px; font: 14px/1.4 var(--body); }
+.pop-name { font: 600 1.05rem/1.2 var(--display); margin: 0 0 2px; }
+.pop-meta { color: var(--muted); margin: 0 0 6px; }
+.pop-hats { font-weight: 600; color: var(--c); }
+.badge { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+         border: 1px solid var(--new); border-radius: 4px; padding: 0 4px; margin-left: 6px; vertical-align: 2px; }
+.pop-link { color: var(--fg); font-size: 0.85rem; }
+.leaflet-container a.leaflet-popup-close-button { color: var(--muted); }
+
+@media (max-width: 520px) {
+  .panel { padding: 10px 12px; gap: 8px; }
+  h1 { font-size: 1.1rem; }
+  .chip { padding: 5px 8px; }
+}
+</style>
+</head>
+<body>
+<div id="map" role="application" aria-label="Map of hatted restaurants"></div>
+
+<div class="panel">
+  <div>
+    <h1>Good Food Guide Hats 2026</h1>
+    <p class="sub">Sydney, regional NSW &amp; ACT · <span id="total"></span> restaurants</p>
+  </div>
+  <div class="filters" id="filters"></div>
+  <label class="toggle"><input type="checkbox" id="onlyNew"> Only show new entries</label>
+  <p class="foot">Hats from the <a href="https://www.goodfood.com.au/" target="_blank" rel="noopener">Good Food Guide</a>. Map © OpenStreetMap contributors.</p>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const DATA = [{"name": "10 William St", "suburb": "Paddington", "region": "Sydney", "hats": 1, "new": false, "lat": -33.885802, "lng": 151.229127}, {"name": "20 Chapel", "suburb": "Marrickville", "region": "Sydney", "hats": 1, "new": false, "lat": -33.908197, "lng": 151.165804}, {"name": "Abhi’s Indian Restaurant", "suburb": "Strathfield", "region": "Sydney", "hats": 1, "new": false, "lat": -33.858012, "lng": 151.092446}, {"name": "Aenza", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": true, "lat": -33.879264, "lng": 151.215637}, {"name": "Amuro", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": false, "lat": -33.87986, "lng": 151.214807}, {"name": "Ante", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": false, "lat": -33.893661, "lng": 151.1836}, {"name": "Arthur", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.888976, "lng": 151.215445}, {"name": "Attenzione! Food & Wine", "suburb": "Redfern", "region": "Sydney", "hats": 1, "new": false, "lat": -33.892191, "lng": 151.200931}, {"name": "Avia", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": false, "lat": -33.87998, "lng": 151.216765}, {"name": "Baba’s Place", "suburb": "Marrickville", "region": "Sydney", "hats": 1, "new": false, "lat": -33.911303, "lng": 151.166538}, {"name": "Bar Copains", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.882972, "lng": 151.211257}, {"name": "Besa", "suburb": "Bondi", "region": "Sydney", "hats": 1, "new": true, "lat": -33.889731, "lng": 151.271867}, {"name": "Bessie’s", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.883409, "lng": 151.212519}, {"name": "Bistro George", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.861807, "lng": 151.208146}, {"name": "Canvas", "suburb": "Circular Quay", "region": "Sydney", "hats": 1, "new": false, "lat": -33.859677, "lng": 151.209219}, {"name": "Catalina", "suburb": "Rose Bay", "region": "Sydney", "hats": 1, "new": false, "lat": -33.870458, "lng": 151.262854}, {"name": "The Charles Grand Brasserie & Bar", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.868517, "lng": 151.206303}, {"name": "Cho Cho San", "suburb": "Potts Point", "region": "Sydney", "hats": 1, "new": false, "lat": -33.869544, "lng": 151.225318}, {"name": "Cibaria", "suburb": "Manly", "region": "Sydney", "hats": 1, "new": false, "lat": -33.795548, "lng": 151.287272}, {"name": "Civico 47", "suburb": "Paddington", "region": "Sydney", "hats": 1, "new": false, "lat": -33.884893, "lng": 151.23291}, {"name": "Clam Bar", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.863204, "lng": 151.210973}, {"name": "Claret Club", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": true, "lat": -33.875926, "lng": 151.215401}, {"name": "Continental Deli", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": false, "lat": -33.896306, "lng": 151.178418}, {"name": "Corner 75", "suburb": "Randwick", "region": "Sydney", "hats": 1, "new": false, "lat": -33.907592, "lng": 151.248823}, {"name": "Cricca", "suburb": "Windsor", "region": "Sydney", "hats": 1, "new": false, "lat": -33.605788, "lng": 150.821589}, {"name": "The Dry Dock", "suburb": "Balmain", "region": "Sydney", "hats": 1, "new": false, "lat": -33.854821, "lng": 151.182656}, {"name": "Esteban", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.869614, "lng": 151.206555}, {"name": "Farmhouse Kings Cross", "suburb": "Rushcutters Bay", "region": "Sydney", "hats": 1, "new": false, "lat": -33.875096, "lng": 151.22478}, {"name": "Felons Seafood", "suburb": "Manly", "region": "Sydney", "hats": 1, "new": false, "lat": -33.799512, "lng": 151.284008}, {"name": "Firepop", "suburb": "Enmore", "region": "Sydney", "hats": 1, "new": false, "lat": -33.898775, "lng": 151.173323}, {"name": "Fontana", "suburb": "Redfern", "region": "Sydney", "hats": 1, "new": false, "lat": -33.892574, "lng": 151.201601}, {"name": "Fratelli Paradiso", "suburb": "Potts Point", "region": "Sydney", "hats": 1, "new": false, "lat": -33.86885, "lng": 151.225194}, {"name": "Gildas", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.882269, "lng": 151.210268}, {"name": "Golden Century", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.861931, "lng": 151.201023}, {"name": "Grill Americano", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": true, "lat": -33.865976, "lng": 151.210697}, {"name": "Haco", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.877885, "lng": 151.210435}, {"name": "Ho Jiak Town Hall", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.871726, "lng": 151.206325}, {"name": "Infinity by Mark Best", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.870415, "lng": 151.208969}, {"name": "Ito", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.88629, "lng": 151.21356}, {"name": "Jane", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.88706, "lng": 151.215503}, {"name": "Japasu by Sang", "suburb": "Zetland", "region": "Sydney", "hats": 1, "new": false, "lat": -33.907093, "lng": 151.205382}, {"name": "Joe’s Tavern", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": true, "lat": -33.896175, "lng": 151.178385}, {"name": "Kiln", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.878857, "lng": 151.209904}, {"name": "Kindred", "suburb": "Darlington", "region": "Sydney", "hats": 1, "new": false, "lat": -33.888544, "lng": 151.197725}, {"name": "Kisuke", "suburb": "Potts Point", "region": "Sydney", "hats": 1, "new": false, "lat": -33.873098, "lng": 151.224391}, {"name": "La Buvette", "suburb": "Potts Point", "region": "Sydney", "hats": 1, "new": true, "lat": -33.869091, "lng": 151.225314}, {"name": "Lo Presti’s", "suburb": "Redfern", "region": "Sydney", "hats": 1, "new": true, "lat": -33.892981, "lng": 151.207136}, {"name": "Loulou Bistro Milsons Point", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.843673, "lng": 151.20995}, {"name": "Maiz", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": false, "lat": -33.898201, "lng": 151.17681}, {"name": "Matkim", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.862176, "lng": 151.20815}, {"name": "Maydanoz", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.866206, "lng": 151.20647}, {"name": "Mister Grotto", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": false, "lat": -33.896239, "lng": 151.178442}, {"name": "Mu Omakase", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.282585, "lng": 149.130981}, {"name": "Neptune’s Grotto", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.863204, "lng": 151.210973}, {"name": "Nour", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.886721, "lng": 151.213866}, {"name": "Olympic Meats", "suburb": "Marrickville", "region": "Sydney", "hats": 1, "new": false, "lat": -33.911587, "lng": 151.14155}, {"name": "Olympus Dining", "suburb": "Redfern", "region": "Sydney", "hats": 1, "new": false, "lat": -33.891894, "lng": 151.212316}, {"name": "Osteria di Russo & Russo", "suburb": "Enmore", "region": "Sydney", "hats": 1, "new": false, "lat": -33.89901, "lng": 151.173089}, {"name": "Osteria Mucca", "suburb": "Newtown", "region": "Sydney", "hats": 1, "new": false, "lat": -33.896336, "lng": 151.178448}, {"name": "Otto Ristorante", "suburb": "Woolloomooloo", "region": "Sydney", "hats": 1, "new": false, "lat": -33.867999, "lng": 151.220592}, {"name": "Palazzo Salato", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.869746, "lng": 151.205131}, {"name": "The Palomar", "suburb": "Paddington", "region": "Sydney", "hats": 1, "new": true, "lat": -33.881803, "lng": 151.219224}, {"name": "Paski Sopra", "suburb": "Paddington", "region": "Sydney", "hats": 1, "new": false, "lat": -33.881499, "lng": 151.218234}, {"name": "Pellegrino 2000", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.88, "lng": 151.209891}, {"name": "Pizza’Mare", "suburb": "Barangaroo", "region": "Sydney", "hats": 1, "new": true, "lat": -33.8625, "lng": 151.201083}, {"name": "Poly", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.879158, "lng": 151.211033}, {"name": "Porkfat", "suburb": "Haymarket", "region": "Sydney", "hats": 1, "new": false, "lat": -33.880955, "lng": 151.202655}, {"name": "Postino Osteria", "suburb": "Summer Hill", "region": "Sydney", "hats": 1, "new": false, "lat": -33.891818, "lng": 151.137058}, {"name": "RAFI", "suburb": "North Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.839201, "lng": 151.208291}, {"name": "Restaurant Ka", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": false, "lat": -33.878388, "lng": 151.215125}, {"name": "Sala", "suburb": "Pyrmont", "region": "Sydney", "hats": 1, "new": false, "lat": -33.862673, "lng": 151.195233}, {"name": "Sean’s", "suburb": "Bondi", "region": "Sydney", "hats": 1, "new": false, "lat": -33.88953, "lng": 151.281482}, {"name": "Sinclair’s", "suburb": "Penrith", "region": "Sydney", "hats": 1, "new": false, "lat": -33.747409, "lng": 150.68248}, {"name": "Spice Temple", "suburb": "Sydney", "region": "Sydney", "hats": 1, "new": false, "lat": -33.866007, "lng": 151.210194}, {"name": "Takam", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": false, "lat": -33.877065, "lng": 151.221939}, {"name": "Taste of Shunde", "suburb": "Hurstville", "region": "Sydney", "hats": 1, "new": false, "lat": -33.966055, "lng": 151.102668}, {"name": "Tera Bar", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": true, "lat": -33.889569, "lng": 151.214606}, {"name": "Tida Persian Food", "suburb": "North Willoughby", "region": "Sydney", "hats": 1, "new": false, "lat": -33.794194, "lng": 151.196131}, {"name": "Trattoria Orazio", "suburb": "Rushcutters Bay", "region": "Sydney", "hats": 1, "new": true, "lat": -33.877666, "lng": 151.228241}, {"name": "Viand", "suburb": "Woolloomooloo", "region": "Sydney", "hats": 1, "new": false, "lat": -33.87271, "lng": 151.216404}, {"name": "Vineria Luisa", "suburb": "Enmore", "region": "Sydney", "hats": 1, "new": false, "lat": -33.898695, "lng": 151.173359}, {"name": "Wai’s Omakase", "suburb": "Darlinghurst", "region": "Sydney", "hats": 1, "new": true, "lat": -33.882017, "lng": 151.216186}, {"name": "Watermans", "suburb": "Barangaroo", "region": "Sydney", "hats": 1, "new": true, "lat": -33.863075, "lng": 151.201857}, {"name": "White Horse", "suburb": "Surry Hills", "region": "Sydney", "hats": 1, "new": false, "lat": -33.885396, "lng": 151.213864}, {"name": "Yan", "suburb": "Wolli Creek", "region": "Sydney", "hats": 1, "new": false, "lat": -33.93195, "lng": 151.150874}, {"name": "Yeodongsik", "suburb": "Eastwood", "region": "Sydney", "hats": 1, "new": false, "lat": -33.790464, "lng": 151.08299}, {"name": "Ates", "suburb": "Blackheath", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.636478, "lng": 150.286593}, {"name": "Bangalay Dining", "suburb": "Shoalhaven Heads", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -34.850488, "lng": 150.749141}, {"name": "Bar Rochford", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.279343, "lng": 149.128162}, {"name": "Beach Byron Bay", "suburb": "Byron Bay", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -28.642641, "lng": 153.62243}, {"name": "Beltana Farm", "suburb": "Pialligo", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.307329, "lng": 149.180792}, {"name": "Bistro Molines", "suburb": "Mount View", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -32.848767, "lng": 151.29372}, {"name": "Bistro Penny", "suburb": "Newcastle", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -32.927084, "lng": 151.783151}, {"name": "Bruno’s", "suburb": "Bellingen", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -30.452288, "lng": 152.895198}, {"name": "Fiorini’s Osteria Italiana", "suburb": "Orange", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.326139, "lng": 149.022697}, {"name": "Flotilla", "suburb": "Newcastle", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -32.918359, "lng": 151.758119}, {"name": "Frida’s Field", "suburb": "Byron Bay", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -28.720593, "lng": 153.465067}, {"name": "Hey Rosey", "suburb": "Orange", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.28379, "lng": 149.1031}, {"name": "Humbug", "suburb": "Newcastle", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -32.92758, "lng": 151.782561}, {"name": "Lunetta", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.328566, "lng": 149.116728}, {"name": "Megalong Restaurant", "suburb": "Megalong Valley", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.690875, "lng": 150.249465}, {"name": "Meribella", "suburb": "Terrigal", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.44787, "lng": 151.445493}, {"name": "Norma", "suburb": "Albury", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -36.074387, "lng": 146.919418}, {"name": "Paper Daisy", "suburb": "Cabarita", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -28.330771, "lng": 153.570245}, {"name": "Paranormal Wines", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.28879, "lng": 149.14395}, {"name": "Paste Australia", "suburb": "Mittagong", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -34.450724, "lng": 150.445811}, {"name": "Printhie Dining", "suburb": "Orange", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.313168, "lng": 149.008856}, {"name": "Raes Dining Room", "suburb": "Byron Bay", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -28.637368, "lng": 153.632705}, {"name": "Rebel Rebel", "suburb": "Acton", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.28407, "lng": 149.124614}, {"name": "Restaurant Santino", "suburb": "Wollongong", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -34.425518, "lng": 150.894239}, {"name": "The Schoolhouse Restaurant", "suburb": "Orange", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -33.281367, "lng": 149.096842}, {"name": "South on Albany", "suburb": "Berry", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -34.774855, "lng": 150.694431}, {"name": "Stonefruit", "suburb": "Tenterfield", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -29.055671, "lng": 152.01862}, {"name": "Such and Such", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.282186, "lng": 149.131415}, {"name": "Tintino", "suburb": "Canberra", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -35.316096, "lng": 149.140309}, {"name": "You Beauty", "suburb": "Bangalow", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -28.686286, "lng": 153.524666}, {"name": "Zin Food + Wine", "suburb": "Mudgee", "region": "Regional NSW and ACT", "hats": 1, "new": false, "lat": -32.535961, "lng": 149.583817}, {"name": "a’Mare", "suburb": "Barangaroo", "region": "Sydney", "hats": 2, "new": false, "lat": -33.862137, "lng": 151.201003}, {"name": "Aalia", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.868072, "lng": 151.20935}, {"name": "Allta", "suburb": "Surry Hills", "region": "Sydney", "hats": 2, "new": false, "lat": -33.881003, "lng": 151.209529}, {"name": "Aria", "suburb": "Circular Quay", "region": "Sydney", "hats": 2, "new": false, "lat": -33.859204, "lng": 151.213263}, {"name": "Ashe", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": true, "lat": -33.866915, "lng": 151.207689}, {"name": "Bathers’ Pavilion", "suburb": "Balmoral Beach", "region": "Sydney", "hats": 2, "new": false, "lat": -33.822458, "lng": 151.250961}, {"name": "Bennelong", "suburb": "Circular Quay", "region": "Sydney", "hats": 2, "new": false, "lat": -33.857447, "lng": 151.214743}, {"name": "Berowra Waters Inn", "suburb": "Berowra Waters", "region": "Sydney", "hats": 2, "new": false, "lat": -33.595391, "lng": 151.121843}, {"name": "Cafe Paci", "suburb": "Newtown", "region": "Sydney", "hats": 2, "new": false, "lat": -33.893206, "lng": 151.183768}, {"name": "Eleven Barrack", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.867832, "lng": 151.206377}, {"name": "Ester", "suburb": "Chippendale", "region": "Sydney", "hats": 2, "new": false, "lat": -33.88746, "lng": 151.200833}, {"name": "Firedoor", "suburb": "Surry Hills", "region": "Sydney", "hats": 2, "new": false, "lat": -33.881602, "lng": 151.209923}, {"name": "Flaminia", "suburb": "Circular Quay", "region": "Sydney", "hats": 2, "new": true, "lat": -33.860833, "lng": 151.212908}, {"name": "Garaku", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.872086, "lng": 151.204188}, {"name": "Gran Torino", "suburb": "Double Bay", "region": "Sydney", "hats": 2, "new": false, "lat": -33.877412, "lng": 151.241379}, {"name": "Grandfathers", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.867092, "lng": 151.20824}, {"name": "The Grill at The International", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.867884, "lng": 151.209637}, {"name": "Icebergs Dining Room and Bar", "suburb": "Bondi", "region": "Sydney", "hats": 2, "new": false, "lat": -33.895022, "lng": 151.274328}, {"name": "King Clarence", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.868475, "lng": 151.205127}, {"name": "Lee Ho Fook", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": true, "lat": -33.874335, "lng": 151.208772}, {"name": "LuMi Dining", "suburb": "Pyrmont", "region": "Sydney", "hats": 2, "new": false, "lat": -33.866816, "lng": 151.197385}, {"name": "Margaret", "suburb": "Double Bay", "region": "Sydney", "hats": 2, "new": false, "lat": -33.876888, "lng": 151.241483}, {"name": "Omakase by Prefecture 48", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.872086, "lng": 151.204188}, {"name": "Ormeggio at The Spit", "suburb": "Mosman", "region": "Sydney", "hats": 2, "new": false, "lat": -33.804278, "lng": 151.245815}, {"name": "Pilu at Freshwater", "suburb": "Freshwater", "region": "Sydney", "hats": 2, "new": false, "lat": -33.78161, "lng": 151.288673}, {"name": "Porcine", "suburb": "Paddington", "region": "Sydney", "hats": 2, "new": false, "lat": -33.885015, "lng": 151.22765}, {"name": "Porteno", "suburb": "Surry Hills", "region": "Sydney", "hats": 2, "new": false, "lat": -33.886363, "lng": 151.209347}, {"name": "Rockpool Bar & Grill", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.866098, "lng": 151.210204}, {"name": "Shell House Dining Room & Terrace", "suburb": "Sydney", "region": "Sydney", "hats": 2, "new": false, "lat": -33.865165, "lng": 151.206718}, {"name": "South End", "suburb": "Erskineville", "region": "Sydney", "hats": 2, "new": true, "lat": -33.905536, "lng": 151.181086}, {"name": "Stanley", "suburb": "Manly", "region": "Sydney", "hats": 2, "new": true, "lat": -33.800019, "lng": 151.284397}, {"name": "Sushi Oe", "suburb": "Pyrmont", "region": "Sydney", "hats": 2, "new": false, "lat": -33.873863, "lng": 151.19129}, {"name": "Vin-Cenzo’s", "suburb": "Darlinghurst", "region": "Sydney", "hats": 2, "new": false, "lat": -33.876962, "lng": 151.213694}, {"name": "Woodcut", "suburb": "Barangaroo", "region": "Sydney", "hats": 2, "new": false, "lat": -33.86268, "lng": 151.201195}, {"name": "Yellow", "suburb": "Potts Point", "region": "Sydney", "hats": 2, "new": false, "lat": -33.868713, "lng": 151.22543}, {"name": "Yoshii’s Omakase", "suburb": "Barangaroo", "region": "Sydney", "hats": 2, "new": false, "lat": -33.862562, "lng": 151.201276}, {"name": "Bar Heather", "suburb": "Byron Bay", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -28.649942, "lng": 153.613695}, {"name": "Bistro Livi", "suburb": "Murwillumbah", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -28.32707, "lng": 153.395698}, {"name": "EXP. Restaurant", "suburb": "Pokolbin", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -32.773941, "lng": 151.310572}, {"name": "Muse Restaurant", "suburb": "Pokolbin", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -32.777724, "lng": 151.336062}, {"name": "Pilot", "suburb": "Ainslie", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -35.262574, "lng": 149.144784}, {"name": "Pipit", "suburb": "Pottsville", "region": "Regional NSW and ACT", "hats": 2, "new": false, "lat": -28.389444, "lng": 153.563776}, {"name": "Sara Dining", "suburb": "Berry", "region": "Regional NSW and ACT", "hats": 2, "new": true, "lat": -34.807463, "lng": 150.709662}, {"name": "Three Blue Ducks Burradoo", "suburb": "Burradoo", "region": "Regional NSW and ACT", "hats": 2, "new": true, "lat": -34.495214, "lng": 150.393408}, {"name": "Saint Peter", "suburb": "Paddington", "region": "Sydney", "hats": 3, "new": false, "lat": -33.886374, "lng": 151.231857}, {"name": "Sixpenny", "suburb": "Stanmore", "region": "Sydney", "hats": 3, "new": false, "lat": -33.89254, "lng": 151.164719}];
+
+const css = getComputedStyle(document.documentElement);
+const COLOURS = { 1: css.getPropertyValue("--hat1").trim(), 2: css.getPropertyValue("--hat2").trim(), 3: css.getPropertyValue("--hat3").trim() };
+const LABEL = { 1: "One hat", 2: "Two hats", 3: "Three hats" };
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+
+const map = L.map("map", { zoomControl: false }).setView([-33.87, 151.2], 12);
+L.control.zoom({ position: "bottomright" }).addTo(map);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  maxZoom: 19, className: "basemap",
+}).addTo(map);
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+const markers = DATA.map(r => {
+  const m = L.circleMarker([r.lat, r.lng], {
+    radius: 5 + r.hats * 2, color: dark ? "#1b1a18" : "#ffffff", weight: 2,
+    fillColor: COLOURS[r.hats], fillOpacity: 0.95,
+  });
+  const q = encodeURIComponent(`${r.name}, ${r.suburb}`);
+  m.bindPopup(`
+    <p class="pop-name">${esc(r.name)}${r.new ? '<span class="badge">New</span>' : ""}</p>
+    <p class="pop-meta"><span class="pop-hats" style="--c:${COLOURS[r.hats]}">${LABEL[r.hats]}</span> · ${esc(r.suburb)}</p>
+    <a class="pop-link" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener">Open in Google Maps ↗</a>`);
+  m.bindTooltip(r.name, { direction: "top", offset: [0, -6] });
+  m.data = r;
+  return m;
+});
+// draw 3-hat markers on top
+markers.sort((a, b) => a.data.hats - b.data.hats).forEach(m => m.addTo(map));
+
+const active = new Set([1, 2, 3]);
+const onlyNew = document.getElementById("onlyNew");
+
+function refresh() {
+  markers.forEach(m => {
+    const show = active.has(m.data.hats) && (!onlyNew.checked || m.data.new);
+    if (show && !map.hasLayer(m)) m.addTo(map);
+    if (!show && map.hasLayer(m)) m.remove();
+  });
+  markers.filter(m => map.hasLayer(m) && m.data.hats === 3).forEach(m => m.bringToFront());
+}
+
+const filters = document.getElementById("filters");
+[3, 2, 1].forEach(h => {
+  const n = DATA.filter(r => r.hats === h).length;
+  const b = document.createElement("button");
+  b.className = "chip"; b.id = `hat-${h}`; b.setAttribute("aria-pressed", "true");
+  b.style.setProperty("--c", COLOURS[h]);
+  b.innerHTML = `<span class="dot"></span><span>${LABEL[h]}</span><span class="count">${n}</span>`;
+  b.addEventListener("click", () => {
+    active.has(h) ? active.delete(h) : active.add(h);
+    b.setAttribute("aria-pressed", String(active.has(h)));
+    refresh();
+  });
+  filters.appendChild(b);
+});
+onlyNew.addEventListener("change", refresh);
+document.getElementById("total").textContent = DATA.length;
+
+// start on Sydney but make sure regional entries are reachable
+if (DATA.length) map.fitBounds(L.latLngBounds(DATA.filter(r => r.region === "Sydney").map(r => [r.lat, r.lng])), { padding: [30, 30] });
+</script>
+</body>
+</html>

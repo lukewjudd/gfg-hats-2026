@@ -1,0 +1,63 @@
+name,suburb,hats,region,new,lat,lng,source,matched_name
+10 William St,Paddington,1,Sydney,False,-33.885792,151.229117,photon,10 William St
+Aenza,Darlinghurst,1,Sydney,True,-33.879474,151.215769,photon,Aenza
+Amuro,Darlinghurst,1,Sydney,False,-33.879843,151.2147,photon,Amuro
+Attenzione! Food & Wine,Redfern,1,Sydney,False,-33.892261,151.200939,photon,Attenzione Food & Wine
+Avia,Darlinghurst,1,Sydney,False,-33.880038,151.2168,photon,Avia
+Baba’s Place,Marrickville,1,Sydney,False,-33.911254,151.166447,photon,Baba's Place
+Bar Copains,Surry Hills,1,Sydney,False,-33.883015,151.211301,photon,Bar Copains
+Bistro George,Sydney,1,Sydney,False,-33.861905,151.208267,photon,Bistro George
+Catalina,Rose Bay,1,Sydney,False,-33.870478,151.262868,photon,Catalina
+Cho Cho San,Potts Point,1,Sydney,False,-33.869462,151.225368,nominatim,Cho Cho San
+Cibaria,Manly,1,Sydney,False,-33.795714,151.287344,photon,Cibaria
+Continental Deli,Newtown,1,Sydney,False,-33.89636,151.178383,photon,Continental Deli
+Corner 75,Randwick,1,Sydney,False,-33.907643,151.248853,photon,Corner 75 Hungarian
+Cricca,Windsor,1,Sydney,False,-33.605853,150.82163,photon,Cricca
+The Dry Dock,Balmain,1,Sydney,False,-33.854851,151.182689,photon,Dry Dock Hotel
+Esteban,Sydney,1,Sydney,False,-33.869574,151.206525,photon,Esteban
+Firepop,Enmore,1,Sydney,False,-33.898764,151.173335,photon,Firepop
+Fratelli Paradiso,Potts Point,1,Sydney,False,-33.868851,151.225218,photon,Fratelli Paradiso
+Gildas,Surry Hills,1,Sydney,False,-33.882279,151.210216,photon,Gildas - Basque
+Ito,Surry Hills,1,Sydney,False,-33.886276,151.213688,photon,Ito
+Kiln,Surry Hills,1,Sydney,False,-33.878785,151.209899,photon,Kiln
+Kindred,Darlington,1,Sydney,False,-33.888584,151.197758,photon,Kindred
+Kisuke,Potts Point,1,Sydney,False,-33.873104,151.22434,photon,Kisuke
+Maiz,Newtown,1,Sydney,False,-33.898292,151.176826,photon,Maiz
+Matkim,Sydney,1,Sydney,False,-33.862318,151.208508,photon,Matkim
+Nour,Surry Hills,1,Sydney,False,-33.886753,151.213865,photon,Nour
+Osteria di Russo & Russo,Enmore,1,Sydney,False,-33.899055,151.173069,photon,Osteria di Russo & Russo
+Osteria Mucca,Newtown,1,Sydney,False,-33.896395,151.178396,photon,Osteria Mucca
+Otto Ristorante,Woolloomooloo,1,Sydney,False,-33.868062,151.22055,photon,Otto Ristorante
+Pellegrino 2000,Surry Hills,1,Sydney,False,-33.879989,151.209894,photon,Pellegrino 2000
+RAFI,North Sydney,1,Sydney,False,-33.839222,151.208381,photon,Rafi
+Sala,Pyrmont,1,Sydney,False,-33.862623,151.195331,photon,Sala
+Spice Temple,Sydney,1,Sydney,False,-33.866113,151.21028,photon,Spice Temple
+Taste of Shunde,Hurstville,1,Sydney,False,-33.96607,151.102669,photon,Taste of Shunde
+Vineria Luisa,Enmore,1,Sydney,False,-33.898761,151.173381,photon,Vineria Luisa
+White Horse,Surry Hills,1,Sydney,False,-33.885407,151.213841,photon,White Horse Hotel
+Yeodongsik,Eastwood,1,Sydney,False,-33.790507,151.082944,photon,Yeodongsik
+Bar Rochford,Canberra,1,Regional NSW and ACT,False,-35.279319,149.128105,photon,Bar Rochford
+Beach Byron Bay,Byron Bay,1,Regional NSW and ACT,False,-28.642599,153.622375,photon,Beach Byron Bay
+Beltana Farm,Pialligo,1,Regional NSW and ACT,False,-35.30754,149.180235,photon,Beltana Farm
+Bistro Molines,Mount View,1,Regional NSW and ACT,False,-32.84876,151.293799,photon,Bistro Molines
+Norma,Albury,1,Regional NSW and ACT,False,-36.074384,146.919439,photon,Norma
+Paper Daisy,Cabarita,1,Regional NSW and ACT,False,-28.215318,152.032539,photon,Paper Daisee
+Paste Australia,Mittagong,1,Regional NSW and ACT,False,-34.450728,150.445823,photon,Paste Australia
+Rebel Rebel,Acton,1,Regional NSW and ACT,False,-35.284101,149.124572,photon,Rebel Rebel
+South on Albany,Berry,1,Regional NSW and ACT,False,-34.774885,150.694377,photon,South on Albany
+Stonefruit,Tenterfield,1,Regional NSW and ACT,False,-29.055667,152.018509,photon,Stonefruit
+Such and Such,Canberra,1,Regional NSW and ACT,False,-35.282152,149.131345,photon,Such and Such
+Eleven Barrack,Sydney,2,Sydney,False,-33.867817,151.206382,photon,Eleven Barrack
+Ester,Chippendale,2,Sydney,False,-33.887527,151.200868,photon,Ester
+Gran Torino,Double Bay,2,Sydney,False,-33.877369,151.24138,photon,Gran Torino
+Grandfathers,Sydney,2,Sydney,False,-33.867212,151.208206,photon,Grandfather's
+Margaret,Double Bay,2,Sydney,False,-33.876866,151.241543,photon,Margaret
+Pilu at Freshwater,Freshwater,2,Sydney,False,-33.781592,151.288557,photon,Pilu at Freshwater
+Porteno,Surry Hills,2,Sydney,False,-33.890703,151.210277,photon,Porteño
+Rockpool Bar & Grill,Sydney,2,Sydney,False,-33.866011,151.21036,photon,Rockpool Bar & Grill
+Sushi Oe,Pyrmont,2,Sydney,False,-33.823043,151.209619,photon,Sushi Oe
+Yellow,Potts Point,2,Sydney,False,-33.868719,151.225512,nominatim,Yellow
+Muse Restaurant,Pokolbin,2,Regional NSW and ACT,False,-32.777647,151.336086,photon,Muse Restaurant
+Pilot,Ainslie,2,Regional NSW and ACT,False,-35.262524,149.144795,photon,Pilot
+Saint Peter,Paddington,3,Sydney,False,-33.886506,151.231885,photon,Saint Peter
+Sixpenny,Stanmore,3,Sydney,False,-33.892556,151.16475,photon,Sixpenny

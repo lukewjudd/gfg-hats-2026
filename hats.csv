@@ -1,0 +1,164 @@
+name,suburb,hats,region,new
+10 William St,Paddington,1,Sydney,False
+20 Chapel,Marrickville,1,Sydney,False
+Abhi’s Indian Restaurant,Strathfield,1,Sydney,False
+Aenza,Darlinghurst,1,Sydney,True
+Amuro,Darlinghurst,1,Sydney,False
+Ante,Newtown,1,Sydney,False
+Arthur,Surry Hills,1,Sydney,False
+Attenzione! Food & Wine,Redfern,1,Sydney,False
+Avia,Darlinghurst,1,Sydney,False
+Baba’s Place,Marrickville,1,Sydney,False
+Bar Copains,Surry Hills,1,Sydney,False
+Besa,Bondi,1,Sydney,True
+Bessie’s,Surry Hills,1,Sydney,False
+Bistro George,CBD,1,Sydney,False
+Canvas,Circular Quay,1,Sydney,False
+Catalina,Rose Bay,1,Sydney,False
+The Charles Grand Brasserie & Bar,CBD,1,Sydney,False
+Cho Cho San,Potts Point,1,Sydney,False
+Cibaria,Manly,1,Sydney,False
+Civico 47,Paddington,1,Sydney,False
+Clam Bar,CBD,1,Sydney,False
+Claret Club,Darlinghurst,1,Sydney,True
+Continental Deli,Newtown,1,Sydney,False
+Corner 75,Randwick,1,Sydney,False
+Cricca,Windsor,1,Sydney,False
+The Dry Dock,Balmain,1,Sydney,False
+Esteban,CBD,1,Sydney,False
+Farmhouse Kings Cross,Rushcutters Bay,1,Sydney,False
+Felons Seafood,Manly,1,Sydney,False
+Firepop,Enmore,1,Sydney,False
+Fontana,Redfern,1,Sydney,False
+Fratelli Paradiso,Potts Point,1,Sydney,False
+Gildas,Surry Hills,1,Sydney,False
+Golden Century,CBD,1,Sydney,False
+Grill Americano,CBD,1,Sydney,True
+Haco,Sydney,1,Sydney,False
+Ho Jiak Town Hall,CBD,1,Sydney,False
+Infinity by Mark Best,CBD,1,Sydney,False
+Ito,Surry Hills,1,Sydney,False
+Jane,Surry Hills,1,Sydney,False
+Japasu by Sang,Zetland,1,Sydney,False
+Joe’s Tavern,Newtown,1,Sydney,True
+Kiln,Surry Hills,1,Sydney,False
+Kindred,Darlington,1,Sydney,False
+Kisuke,Potts Point,1,Sydney,False
+La Buvette,Potts Point,1,Sydney,True
+Lo Presti’s,Redfern,1,Sydney,True
+Loulou Bistro Milsons Point,CBD,1,Sydney,False
+Maiz,Newtown,1,Sydney,False
+Matkim,CBD,1,Sydney,False
+Maydanoz,CBD,1,Sydney,False
+Mister Grotto,Newtown,1,Sydney,False
+Mu Omakase,Canberra,1,Regional NSW and ACT,False
+Neptune’s Grotto,CBD,1,Sydney,False
+Nour,Surry Hills,1,Sydney,False
+Olympic Meats,Marrickville,1,Sydney,False
+Olympus Dining,Redfern,1,Sydney,False
+Osteria di Russo & Russo,Enmore,1,Sydney,False
+Osteria Mucca,Newtown,1,Sydney,False
+Otto Ristorante,Woolloomooloo,1,Sydney,False
+Palazzo Salato,CBD,1,Sydney,False
+The Palomar,Paddington,1,Sydney,True
+Paski Sopra,Paddington,1,Sydney,False
+Pellegrino 2000,Surry Hills,1,Sydney,False
+Pizza’Mare,Barangaroo,1,Sydney,True
+Poly,Surry Hills,1,Sydney,False
+Porkfat,Haymarket,1,Sydney,False
+Postino Osteria,Summer Hill,1,Sydney,False
+RAFI,North Sydney,1,Sydney,False
+Restaurant Ka,Darlinghurst,1,Sydney,False
+Sala,Pyrmont,1,Sydney,False
+Sean’s,Bondi,1,Sydney,False
+Sinclair’s,Penrith,1,Sydney,False
+Spice Temple,CBD,1,Sydney,False
+Takam,Darlinghurst,1,Sydney,False
+Taste of Shunde,Hurstville,1,Sydney,False
+Tera Bar,Surry Hills,1,Sydney,True
+Tida Persian Food,North Willoughby,1,Sydney,False
+Trattoria Orazio,Rushcutters Bar,1,Sydney,True
+Viand,Woolloomooloo,1,Sydney,False
+Vineria Luisa,Enmore,1,Sydney,False
+Wai’s Omakase,Darlinghurst,1,Sydney,True
+Watermans,Barangaroo,1,Sydney,True
+White Horse,Surry Hills,1,Sydney,False
+Yan,Wolli Creek,1,Sydney,False
+Yeodongsik,Eastwood,1,Sydney,False
+Ates,Blackheath,1,Regional NSW and ACT,False
+Bangalay Dining,Shoalhaven Heads,1,Regional NSW and ACT,False
+Bar Rochford,Canberra,1,Regional NSW and ACT,False
+Beach Byron Bay,Byron Bay,1,Regional NSW and ACT,False
+Beltana Farm,Pialligo,1,Regional NSW and ACT,False
+Bistro Molines,Mount View,1,Regional NSW and ACT,False
+Bistro Penny,Newcastle,1,Regional NSW and ACT,False
+Bruno’s,Bellingen,1,Regional NSW and ACT,False
+Fiorini’s Osteria Italiana,Orange,1,Regional NSW and ACT,False
+Flotilla,Newcastle,1,Regional NSW and ACT,False
+Frida’s Field,Byron Bay,1,Regional NSW and ACT,False
+Hey Rosey,Orange,1,Regional NSW and ACT,False
+Humbug,Newcastle,1,Regional NSW and ACT,False
+Lunetta,Canberra,1,Regional NSW and ACT,False
+Megalong Restaurant,Megalong Valley,1,Regional NSW and ACT,False
+Meribella,Terrigal,1,Regional NSW and ACT,False
+Norma,Albury,1,Regional NSW and ACT,False
+Paper Daisy,Cabarita,1,Regional NSW and ACT,False
+Paranormal Wines,Canberra,1,Regional NSW and ACT,False
+Paste Australia,Mittagong,1,Regional NSW and ACT,False
+Printhie Dining,Orange,1,Regional NSW and ACT,False
+Raes Dining Room,Byron Bay,1,Regional NSW and ACT,False
+Rebel Rebel,Acton,1,Regional NSW and ACT,False
+Restaurant Santino,Wollongong,1,Regional NSW and ACT,False
+The Schoolhouse Restaurant,Orange,1,Regional NSW and ACT,False
+South on Albany,Berry,1,Regional NSW and ACT,False
+Stonefruit,Tenterfield,1,Regional NSW and ACT,False
+Such and Such,Canberra,1,Regional NSW and ACT,False
+Tintino,Canberra,1,Regional NSW and ACT,False
+You Beauty,Bangalow,1,Regional NSW and ACT,False
+Zin Food + Wine,Mudgee,1,Regional NSW and ACT,False
+a’Mare,Barangaroo,2,Sydney,False
+Aalia,Sydney,2,Sydney,False
+Allta,Surry Hills,2,Sydney,False
+Aria,Circular Quay,2,Sydney,False
+Ashe,CBD,2,Sydney,True
+Bathers’ Pavilion,Balmoral Beach,2,Sydney,False
+Bennelong,Circular Quay,2,Sydney,False
+Berowra Waters Inn,Berowra Waters,2,Sydney,False
+Cafe Paci,Newtown,2,Sydney,False
+Eleven Barrack,CBD,2,Sydney,False
+Ester,Chippendale,2,Sydney,False
+Firedoor,Surry Hills,2,Sydney,False
+Flaminia,Circular Quay,2,Sydney,True
+Garaku,CBD,2,Sydney,False
+Gran Torino,Double Bay,2,Sydney,False
+Grandfathers,CBD,2,Sydney,False
+The Grill at The International,CBD,2,Sydney,False
+Icebergs Dining Room and Bar,Bondi,2,Sydney,False
+King Clarence,CBD,2,Sydney,False
+Lee Ho Fook,CBD,2,Sydney,True
+LuMi Dining,Pyrmont,2,Sydney,False
+Margaret,Double Bay,2,Sydney,False
+Omakase by Prefecture 48,CBD,2,Sydney,False
+Ormeggio at The Spit,Mosman,2,Sydney,False
+Pilu at Freshwater,Freshwater,2,Sydney,False
+Porcine,Paddington,2,Sydney,False
+Porteno,Surry Hills,2,Sydney,False
+Rockpool Bar & Grill,CBD,2,Sydney,False
+Shell House Dining Room & Terrace,CBD,2,Sydney,False
+South End,Erskineville,2,Sydney,True
+Stanley,Manly,2,Sydney,True
+Sushi Oe,Pyrmont,2,Sydney,False
+Vin-Cenzo’s,Darlinghurst,2,Sydney,False
+Woodcut,Barangaroo,2,Sydney,False
+Yellow,Potts Point,2,Sydney,False
+Yoshii’s Omakase,Barangaroo,2,Sydney,False
+Bar Heather,Byron Bay,2,Regional NSW and ACT,False
+Bistro Livi,Murwillumbah,2,Regional NSW and ACT,False
+EXP. Restaurant,Pokolbin,2,Regional NSW and ACT,False
+Muse Restaurant,Pokolbin,2,Regional NSW and ACT,False
+Pilot,Ainslie,2,Regional NSW and ACT,False
+Pipit,Pottsville,2,Regional NSW and ACT,False
+Sara Dining,Berry,2,Regional NSW and ACT,True
+Three Blue Ducks Burradoo,Burradoo,2,Regional NSW and ACT,True
+Saint Peter,Paddington,3,Sydney,False
+Sixpenny,Stanmore,3,Sydney,False
